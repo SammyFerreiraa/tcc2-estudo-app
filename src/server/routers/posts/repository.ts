@@ -122,23 +122,4 @@ export const postRepository = {
       where: { id },
     });
   },
-
-  createComment: async (postId: number, text: string, userId: string) => {
-    return await prisma.comment.create({
-      data: {
-        text,
-        postId,
-        userId,
-      },
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
-      },
-    });
-  },
 };
