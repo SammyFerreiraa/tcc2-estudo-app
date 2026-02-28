@@ -1,0 +1,14 @@
+services:
+   db:
+      container_name: template-db
+      image: postgres:17
+      volumes:
+         - dbdata:/var/lib/postgresql/data/
+      environment:
+         POSTGRES_USER: postgres
+         POSTGRES_PASSWORD: postgres
+         POSTGRES_DB: db
+      ports:
+         - "4321:5432"
+volumes:
+   dbdata:

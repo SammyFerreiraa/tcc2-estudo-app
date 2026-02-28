@@ -1,0 +1,28 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "extends": ["ultracite"],
+  "files": {
+    "includes": ["src/**/*.{js,jsx,ts,tsx}", "*.{js,ts,mjs,cjs}"],
+    "ignoreUnknown": true
+  },
+  "formatter": {
+    "lineWidth": 120
+  },
+  "linter": {
+    "rules": {
+      "nursery": {
+        "useConsistentTypeDefinitions": "off"
+      },
+      "suspicious": {
+        "noConsole": "off",
+        "useAwait": "off"
+      },
+      "style": {
+        "noMagicNumbers": "off",
+        "noNonNullAssertion": "off",
+        "useBlockStatements": "off",
+        "noExportedImports": "off"
+      }
+    }
+  }
+}

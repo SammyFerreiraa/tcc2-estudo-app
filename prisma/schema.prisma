@@ -1,0 +1,87 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+generator drizzle {
+    provider = "drizzle-prisma-generator"
+    output   = "./drizzle"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+    ADMIN
+    MANAGER
+    MEMBER
+}
+
+model User {
+    id            String    @id @default(uuid())
+    name          String?
+    email         String    @unique
+    emailVerified DateTime?
+    image         String?
+    role          UserRole
+    sessions      Session[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    Post             Post[]
+    verificationCode verificationCode[]
+    uploads          Upload[]
+}
+
+model Session {
+    sessionToken String   @unique
+    userId       String
+    userAgent    String?
+    expires      DateTime
+    ipAddress    String? // IP address do login
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([userId])
+    @@index([ipAddress])
+}
+
+model verificationCode {
+    id        String   @id @default(uuid())
+    createdAt DateTime @default(now())
+    expiresAt DateTime
+    used      Boolean  @default(false)
+    code      String
+
+    userId String
+    user   User   @relation(fields: [userId], references: [id])
+
+    @@index([userId])
+}
+
+model Upload {
+    id           String @id @default(uuid())
+    fileName     String // Nome do arquivo no storage (path/to/file.ext)
+    originalName String // Nome original do arquivo
+    mimeType     String // Tipo MIME do arquivo
+    size         Int // Tamanho em bytes
+    folder       String // Pasta no storage
+
+    userId String
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([userId])
+    @@index([folder])
+    @@index([mimeType])
+}
