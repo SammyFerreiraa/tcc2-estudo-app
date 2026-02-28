@@ -1,5 +1,4 @@
 import { env } from "@/config/env";
-import { logger } from "@/server/domain/logger";
 import { generateCSRFState, validateCSRFState } from "../csrf-protection";
 import type { AuthCredentials, AuthProvider, AuthResult } from "./core";
 
@@ -73,7 +72,6 @@ const handleCallback = async (code: string, state?: string): Promise<AuthResult>
       },
     };
   } catch (error) {
-    await logger.error("Google OAuth error", { error });
     return {
       success: false,
       error: error instanceof Error ? error.message : "OAuth failed",

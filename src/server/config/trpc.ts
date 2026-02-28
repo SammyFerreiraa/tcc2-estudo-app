@@ -5,7 +5,6 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 import { getAuthSession } from "@/common/auth";
 import { ACCESS_TOKEN_EXPIRES, validateRefreshTokenEdge, verifyAccessToken } from "@/common/auth-edge";
-import { logger } from "../domain/logger";
 import { formatValidationErrorsFromString, trpcCustomMessage } from "../utils/error-utils";
 import { parseCookies } from "../utils/parse-cookies";
 
@@ -25,7 +24,6 @@ export const createTRPCContext = async (opts: { headers: Headers; resHeaders: He
         session = null;
       }
     } catch (error) {
-      void logger.error("Error verifying access token:", error);
       session = null;
     }
   }
@@ -44,7 +42,6 @@ export const createTRPCContext = async (opts: { headers: Headers; resHeaders: He
         resHeaders.append("set-cookie", clearRefreshCookie);
       }
     } catch (error) {
-      void logger.error("Error validating refresh token:", error);
       const clearRefreshCookie = "refreshToken=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0";
       resHeaders.append("set-cookie", clearRefreshCookie);
     }
@@ -84,8 +81,6 @@ const errorHandlingMiddleware = t.middleware(({ ctx, next }) => {
 
     if (result && !result.ok) {
       const { error } = result;
-
-      await logger.error(error.message, error);
 
       if (error instanceof TRPCError) {
         if (error.cause instanceof PrismaClientValidationError) {

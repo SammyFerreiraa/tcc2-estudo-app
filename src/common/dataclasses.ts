@@ -8,12 +8,6 @@ export interface ITokenPayload {
   iat: number;
 }
 
-export type IPostWithComments = Prisma.PostGetPayload<{
-  include: {
-    comments: true;
-  };
-}>;
-
 export type IUser = Prisma.UserGetPayload<{
   include: {
     Post: true;

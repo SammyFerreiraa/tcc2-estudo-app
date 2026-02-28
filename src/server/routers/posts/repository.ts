@@ -25,21 +25,6 @@ export const postRepository = {
               email: true,
             },
           },
-          comments: {
-            include: {
-              user: {
-                select: {
-                  id: true,
-                  name: true,
-                  email: true,
-                },
-              },
-            },
-            orderBy: { createdAt: "desc" },
-          },
-          _count: {
-            select: { comments: true },
-          },
         },
         orderBy: { createdAt: "desc" },
         take: limit,
@@ -65,18 +50,6 @@ export const postRepository = {
             name: true,
             email: true,
           },
-        },
-        comments: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-              },
-            },
-          },
-          orderBy: { createdAt: "desc" },
         },
       },
     });

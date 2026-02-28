@@ -23,19 +23,6 @@ interface PostCardProps {
       name: string | null;
       email: string;
     };
-    comments: Array<{
-      id: number;
-      text: string;
-      createdAt: Date;
-      user: {
-        id: string;
-        name: string | null;
-        email: string;
-      } | null;
-    }>;
-    _count: {
-      comments: number;
-    };
   };
   onDeleted?: () => void;
 }
@@ -43,7 +30,6 @@ interface PostCardProps {
 export function PostCard({ post, onDeleted }: PostCardProps) {
   const { user } = useSession();
   const [isDeleting, setIsDeleting] = useState(false);
-  const [showComments, setShowComments] = useState(false);
 
   const { mutate: deletePost } = apiClient.posts.delete.useMutation({
     onSuccess: () => {
@@ -141,13 +127,6 @@ export function PostCard({ post, onDeleted }: PostCardProps) {
 
       <CardContent className="space-y-4">
         <div className="whitespace-pre-wrap text-sm leading-relaxed">{post.content}</div>
-
-        <div className="flex items-center gap-4 border-muted-foreground/20 border-t pt-3">
-          <Button className="gap-2" onClick={() => setShowComments(!showComments)} size="sm" variant="ghost">
-            <MessageCircle className="h-4 w-4" />
-            {post._count.comments} {post._count.comments === 1 ? "comentário" : "comentários"}
-          </Button>
-        </div>
       </CardContent>
     </Card>
   );
