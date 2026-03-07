@@ -1,3 +1,7 @@
+---
+trigger: always_on
+---
+
 # ANTI-PATTERNS — Parte 2: Template (tRPC, Prisma, Zod, Next.js)
 
 Anti-patterns específicos da stack deste projeto: tRPC, Prisma, Zod, React Hook Form, permissões e rotas.

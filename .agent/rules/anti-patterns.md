@@ -1,3 +1,7 @@
+---
+trigger: always_on
+---
+
 # ANTI-PATTERNS — Parte 1: Código e TypeScript (Senior-grade)
 
 Anti-patterns genéricos de código, JSX, TypeScript e React.
