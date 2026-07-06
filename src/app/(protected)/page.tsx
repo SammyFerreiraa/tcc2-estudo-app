@@ -1,4 +1,4 @@
-import { FileText, Settings, Users } from "lucide-react";
+import { Settings, Users } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/interface/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/interface/components/ui/card";
@@ -25,23 +25,6 @@ export default async function Page() {
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <Card>
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-blue-600" />
-                <CardTitle>Posts</CardTitle>
-              </div>
-              <CardDescription>Sistema completo de posts com comentários</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Link href="/posts">
-                <Button className="w-full" variant="outline">
-                  Ver Posts
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
-
           <Card>
             <CardHeader>
               <div className="flex items-center gap-2">

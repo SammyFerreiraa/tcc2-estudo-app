@@ -8,8 +8,4 @@ export interface ITokenPayload {
   iat: number;
 }
 
-export type IUser = Prisma.UserGetPayload<{
-  include: {
-    Post: true;
-  };
-}>;
+export type IUser = Prisma.UserGetPayload<object>;

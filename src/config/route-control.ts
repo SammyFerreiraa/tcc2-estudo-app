@@ -17,8 +17,4 @@ export const routesPermissions = [
     path: "/member-page",
     rolesAllowed: [UserRole.MEMBER],
   },
-  {
-    path: "/posts",
-    rolesAllowed: allAllowed,
-  },
 ];

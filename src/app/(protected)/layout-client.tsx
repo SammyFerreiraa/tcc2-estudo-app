@@ -1,6 +1,6 @@
 "use client";
 
-import { BookOpen, FileText, Home, Settings, Users } from "lucide-react";
+import { BookOpen, Home, Settings, Users } from "lucide-react";
 import type { ReactNode } from "react";
 import { Sidebar } from "@/interface/components/sidebar";
 import { SidebarProvider } from "@/interface/components/sidebar/context";
@@ -26,9 +26,6 @@ export function ProtectedLayoutClient({ children }: ProtectedLayoutClientProps) 
           <Sidebar.Content>
             <Sidebar.Item href="/" icon={Home}>
               Dashboard
-            </Sidebar.Item>
-            <Sidebar.Item href="/posts" icon={FileText}>
-              Posts
             </Sidebar.Item>
             <Sidebar.Item href="/example" icon={Settings}>
               Exemplo
