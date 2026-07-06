@@ -13,7 +13,7 @@ const getAuthUrl = async (redirectUrl?: string): Promise<string> => {
   const csrfState = generateCSRFState(redirectUrl);
 
   const params = new URLSearchParams({
-    client_id: GOOGLE_CONFIG.clientId,
+    client_id: GOOGLE_CONFIG.clientId || "",
     redirect_uri: GOOGLE_CONFIG.redirectUri,
     response_type: "code",
     scope: GOOGLE_CONFIG.scope,
@@ -30,8 +30,8 @@ const exchangeCodeForToken = async (code: string) => {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({
-      client_id: GOOGLE_CONFIG.clientId,
-      client_secret: GOOGLE_CONFIG.clientSecret,
+      client_id: GOOGLE_CONFIG.clientId || "",
+      client_secret: GOOGLE_CONFIG.clientSecret || "",
       code,
       grant_type: "authorization_code",
       redirect_uri: GOOGLE_CONFIG.redirectUri,

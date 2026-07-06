@@ -8,26 +8,35 @@ export const env = createEnv({
 
     AUTH_SECRET: z.string(),
 
-    //Google Auth
-    AUTH_GOOGLE_ID: z.string(),
-    AUTH_GOOGLE_SECRET: z.string(),
+    // Google Auth
+    AUTH_GOOGLE_ID: z.string().optional(),
+    AUTH_GOOGLE_SECRET: z.string().optional(),
 
-    //Email Auth
-    EMAIL_HOST: z.string(),
-    EMAIL_PORT: z.string().transform(Number),
-    EMAIL_USER: z.string(),
-    EMAIL_PASS: z.string(),
-    EMAIL_FROM: z.string(),
+    // Email Auth
+    EMAIL_HOST: z.string().optional(),
+    EMAIL_PORT: z
+      .string()
+      .optional()
+      .transform((val) => (val ? Number(val) : undefined)),
+    EMAIL_USER: z.string().optional(),
+    EMAIL_PASS: z.string().optional(),
+    EMAIL_FROM: z.string().optional(),
 
-    //Google Cloud Storage
-    GCP_TYPE: z.string().default("service_account"),
-    GCP_PROJECT_ID: z.string(),
-    GCP_PRIVATE_KEY_ID: z.string(),
-    GCP_PRIVATE_KEY: z.string(),
-    GCP_CLIENT_EMAIL: z.string(),
-    GCP_CLIENT_ID: z.string(),
-    GCP_UNIVERSE_DOMAIN: z.string().default("googleapis.com"),
-    GCP_STORAGE_BUCKET: z.string(),
+    // AWS CloudWatch
+    AWS_CLOUDWATCH_REGION: z.string().optional(),
+    AWS_CLOUDWATCH_ACCESS_KEY_ID: z.string().optional(),
+    AWS_CLOUDWATCH_SECRET_ACCESS_KEY: z.string().optional(),
+    AWS_CLOUDWATCH_LOG_GROUP_NAME: z.string().optional(),
+
+    // Google Cloud Storage
+    GCP_TYPE: z.string().optional().default("service_account"),
+    GCP_PROJECT_ID: z.string().optional(),
+    GCP_PRIVATE_KEY_ID: z.string().optional(),
+    GCP_PRIVATE_KEY: z.string().optional(),
+    GCP_CLIENT_EMAIL: z.string().optional(),
+    GCP_CLIENT_ID: z.string().optional(),
+    GCP_UNIVERSE_DOMAIN: z.string().optional().default("googleapis.com"),
+    GCP_STORAGE_BUCKET: z.string().optional(),
   },
 
   /**
@@ -36,8 +45,8 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
-    NEXT_PUBLIC_API_URL: z.string(),
-    NEXT_PUBLIC_GCP_STORAGE_BUCKET: z.string(),
+    NEXT_PUBLIC_API_URL: z.string().optional().default("http://localhost:3000"),
+    NEXT_PUBLIC_GCP_STORAGE_BUCKET: z.string().optional(),
   },
 
   /**
@@ -51,18 +60,24 @@ export const env = createEnv({
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
     NEXT_PUBLIC_GCP_STORAGE_BUCKET: process.env.NEXT_PUBLIC_GCP_STORAGE_BUCKET,
 
-    //Google Auth
+    // Google Auth
     AUTH_GOOGLE_ID: process.env.AUTH_GOOGLE_ID,
     AUTH_GOOGLE_SECRET: process.env.AUTH_GOOGLE_SECRET,
 
-    //Email Auth
+    // Email Auth
     EMAIL_HOST: process.env.EMAIL_HOST,
     EMAIL_PORT: process.env.EMAIL_PORT,
     EMAIL_USER: process.env.EMAIL_USER,
     EMAIL_PASS: process.env.EMAIL_PASS,
     EMAIL_FROM: process.env.EMAIL_FROM,
 
-    //Google Cloud Storage
+    // AWS CloudWatch
+    AWS_CLOUDWATCH_REGION: process.env.AWS_CLOUDWATCH_REGION,
+    AWS_CLOUDWATCH_ACCESS_KEY_ID: process.env.AWS_CLOUDWATCH_ACCESS_KEY_ID,
+    AWS_CLOUDWATCH_SECRET_ACCESS_KEY: process.env.AWS_CLOUDWATCH_SECRET_ACCESS_KEY,
+    AWS_CLOUDWATCH_LOG_GROUP_NAME: process.env.AWS_CLOUDWATCH_LOG_GROUP_NAME,
+
+    // Google Cloud Storage
     GCP_STORAGE_BUCKET: process.env.GCP_STORAGE_BUCKET,
     GCP_TYPE: process.env.GCP_TYPE,
     GCP_PROJECT_ID: process.env.GCP_PROJECT_ID,

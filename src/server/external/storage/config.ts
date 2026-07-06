@@ -9,8 +9,8 @@ const storage = new Storage({
     client_email: env.GCP_CLIENT_EMAIL,
     client_id: env.GCP_CLIENT_ID,
     universe_domain: env.GCP_UNIVERSE_DOMAIN,
-    private_key: env.GCP_PRIVATE_KEY.replace(/\\n/g, "\n"),
+    private_key: env.GCP_PRIVATE_KEY?.replace(/\\n/g, "\n"),
   },
 });
 
-export const defaultBucket = storage.bucket(env.GCP_STORAGE_BUCKET);
+export const defaultBucket = storage.bucket(env.GCP_STORAGE_BUCKET ?? "default");
