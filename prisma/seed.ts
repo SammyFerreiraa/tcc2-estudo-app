@@ -361,13 +361,11 @@ async function main() {
   currentMonday.setDate(now.getDate() - dayOfWeek);
   currentMonday.setHours(12, 0, 0, 0);
 
-  const testUsers = [testUser1, testUser2];
-
   const tasksData = TASK_DEFINITIONS.map((def) => {
     const taskDate = new Date(currentMonday);
     taskDate.setDate(currentMonday.getDate() - def.week * 7 + def.day);
 
-    const user = testUsers[def.userIndex];
+    const user = def.userIndex === 0 ? testUser1 : testUser2;
 
     return {
       title: def.title,
