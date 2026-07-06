@@ -36,6 +36,7 @@ model User {
 
     verificationCode verificationCode[]
     uploads          Upload[]
+    tasks            Task[]
 }
 
 model Session {
