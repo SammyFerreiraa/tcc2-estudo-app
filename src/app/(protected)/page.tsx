@@ -1,4 +1,4 @@
-import { Settings, Users } from "lucide-react";
+import { Users } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/interface/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/interface/components/ui/card";
@@ -25,23 +25,6 @@ export default async function Page() {
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <Card>
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <Settings className="h-5 w-5 text-green-600" />
-                <CardTitle>Exemplos</CardTitle>
-              </div>
-              <CardDescription>Componentes e funcionalidades de exemplo</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Link href="/example">
-                <Button className="w-full" variant="outline">
-                  Ver Exemplos
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
-
           <Card>
             <CardHeader>
               <div className="flex items-center gap-2">
