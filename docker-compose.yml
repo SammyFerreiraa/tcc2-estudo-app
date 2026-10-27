@@ -1,6 +1,6 @@
 services:
    db:
-      container_name: template-db
+      container_name: tcc-db
       image: postgres:17
       volumes:
          - dbdata:/var/lib/postgresql/data/
@@ -9,6 +9,6 @@ services:
          POSTGRES_PASSWORD: postgres
          POSTGRES_DB: db
       ports:
-         - "4321:5432"
+         - "4322:5432"
 volumes:
    dbdata:
