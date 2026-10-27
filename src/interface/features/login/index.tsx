@@ -3,24 +3,34 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import type { ILogin } from "@/common/schemas/user";
-import { loginSchema } from "@/common/schemas/user";
+import type { ICredentialsLogin } from "@/common/schemas/user";
+import { credentialsLoginSchema, loginSchema } from "@/common/schemas/user";
 import { apiClient } from "@/config/trpc/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/interface/components/card";
 import { Google } from "@/interface/components/icons";
 import { Button } from "@/interface/components/ui/button";
-import { InputForm } from "@/interface/components/ui/input";
+import { InputForm, InputPassword } from "@/interface/components/ui/input";
 
 export const LoginPage = () => {
   const {
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
     control,
     handleSubmit,
-  } = useForm<ILogin>({
-    resolver: zodResolver(loginSchema),
+    getValues,
+    trigger,
+  } = useForm<ICredentialsLogin>({
+    resolver: zodResolver(credentialsLoginSchema),
     mode: "onChange",
     defaultValues: {
       email: "",
+      password: "",
+    },
+  });
+
+  const { mutateAsync: signInCredentials } = apiClient.auth.signInCredentials.useMutation({
+    onSuccess: () => {
+      // Navegação completa para não reaproveitar o cache do roteador (que guarda o redirect para /login)
+      window.location.replace("/");
     },
   });
 
@@ -30,8 +40,17 @@ export const LoginPage = () => {
     },
   });
 
-  const submitWithEmail = async (data: ILogin) => {
-    await mutateAsync({ email: data.email });
+  const submitWithPassword = async (data: ICredentialsLogin) => {
+    await signInCredentials(data);
+  };
+
+  const submitWithMagicLink = async () => {
+    const parsed = loginSchema.safeParse({ email: getValues("email") });
+    if (!parsed.success) {
+      await trigger("email");
+      return;
+    }
+    await mutateAsync(parsed.data);
   };
 
   const submitWithGoogle = async () => {
@@ -61,12 +80,27 @@ export const LoginPage = () => {
             <div className="h-px flex-1 bg-gray-200" />
           </div>
 
-          <form className="space-y-4" onSubmit={handleSubmit(submitWithEmail)}>
-            <div className="space-y-2">
-              <InputForm control={control} label="E-mail" name="email" />
-            </div>
+          <form className="space-y-4" onSubmit={handleSubmit(submitWithPassword)}>
+            <InputForm
+              autoComplete="email"
+              control={control}
+              error={errors.email?.message}
+              label="E-mail"
+              name="email"
+              type="email"
+            />
+            <InputPassword
+              autoComplete="current-password"
+              control={control}
+              error={errors.password?.message}
+              label="Senha"
+              name="password"
+            />
             <Button className="w-full" isLoading={isSubmitting} type="submit">
-              Entrar com E-mail
+              Entrar
+            </Button>
+            <Button className="w-full" onClick={submitWithMagicLink} type="button" variant="ghost">
+              Receber link de acesso por e-mail
             </Button>
           </form>
         </CardContent>
