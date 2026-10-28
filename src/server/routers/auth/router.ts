@@ -2,6 +2,7 @@ import { createTRPCRouter } from "@/server/config/trpc";
 import { authenticate, getAuthUrl } from "./methods/auth-provider";
 import { signInEmail } from "./methods/magic-link";
 import { getSession, refreshToken, signOut, signOutAll } from "./methods/session-management";
+import { signUp } from "./methods/sign-up";
 import { verifyToken } from "./methods/verify-token";
 
 export const authRouter = createTRPCRouter({
@@ -14,6 +15,7 @@ export const authRouter = createTRPCRouter({
   refreshToken,
   signOut,
   signOutAll,
+  signUp,
 
   // Magic Link
   signInEmail,

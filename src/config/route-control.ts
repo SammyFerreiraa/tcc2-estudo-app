@@ -2,7 +2,7 @@ import { UserRole } from "@prisma/client";
 
 const allAllowed = [UserRole.MEMBER, UserRole.MANAGER, UserRole.ADMIN];
 
-export const publicRoutes = ["/login", "/auth/verify-token", "/unauthorized"];
+export const publicRoutes = ["/login", "/signup", "/auth/verify-token", "/unauthorized"];
 
 export const routesPermissions = [
   {

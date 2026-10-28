@@ -12,6 +12,17 @@ type UserRecord = {
 };
 
 export const authRepository = {
+  findUserByEmail: async (email: string) => {
+    return await prisma.user.findUnique({ where: { email }, select: { id: true } });
+  },
+
+  createMember: async (data: { name: string; email: string; passwordHash: string }) => {
+    return await prisma.user.create({
+      data: { ...data, role: "MEMBER" },
+      select: { id: true, email: true, name: true, role: true, image: true },
+    });
+  },
+
   findVerificationCode: async (token: string) => {
     return await prisma.verificationCode.findFirst({
       where: { code: token, used: false },
