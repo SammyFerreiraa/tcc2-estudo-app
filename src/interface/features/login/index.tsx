@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import type { ILogin } from "@/common/schemas/user";
@@ -69,6 +70,13 @@ export const LoginPage = () => {
               Entrar com E-mail
             </Button>
           </form>
+
+          <p className="text-center text-gray-500 text-sm">
+            Não tem uma conta?{" "}
+            <Link className="font-semibold text-foreground underline" href="/signup">
+              Cadastre-se
+            </Link>
+          </p>
         </CardContent>
       </Card>
     </div>
