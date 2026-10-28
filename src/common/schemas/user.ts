@@ -4,6 +4,11 @@ export const loginSchema = z.object({
   email: z.string().email(),
 });
 
+export const credentialsLoginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(1, "Informe a senha"),
+});
+
 export type ILogin = z.infer<typeof loginSchema>;
 
 export const signUpSchema = z.object({
@@ -18,3 +23,4 @@ export const signUpSchema = z.object({
 });
 
 export type ISignUp = z.infer<typeof signUpSchema>;
+export type ICredentialsLogin = z.infer<typeof credentialsLoginSchema>;
