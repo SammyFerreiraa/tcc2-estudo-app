@@ -1,5 +1,6 @@
 import { createCallerFactory, createTRPCRouter, procedures } from "./config/trpc";
 import { authRouter } from "./routers/auth/router";
+import { taskRouter } from "./routers/task/router";
 import { uploadRouter } from "./routers/upload";
 
 const p = procedures.protected;
@@ -11,6 +12,7 @@ const p = procedures.protected;
  */
 export const appRouter = createTRPCRouter({
   auth: authRouter,
+  task: taskRouter,
   upload: uploadRouter,
 });
 
