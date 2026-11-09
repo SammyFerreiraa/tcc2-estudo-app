@@ -1,4 +1,4 @@
-import { Users } from "lucide-react";
+import { ListTodo, Users } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/interface/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/interface/components/ui/card";
@@ -25,6 +25,23 @@ export default async function Page() {
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <ListTodo className="h-5 w-5 text-blue-600" />
+                <CardTitle>Tarefas</CardTitle>
+              </div>
+              <CardDescription>Registre suas atividades</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link href="/tasks">
+                <Button className="w-full" variant="outline">
+                  Nova tarefa
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+
           <Card>
             <CardHeader>
               <div className="flex items-center gap-2">
