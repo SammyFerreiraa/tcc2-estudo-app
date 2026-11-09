@@ -10,6 +10,10 @@ export const routesPermissions = [
     rolesAllowed: allAllowed,
   },
   {
+    path: "/tasks",
+    rolesAllowed: allAllowed,
+  },
+  {
     path: "/admin-page",
     rolesAllowed: [UserRole.ADMIN],
   },
