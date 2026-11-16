@@ -23,3 +23,9 @@ export const createTaskSchema = z.object({
 });
 
 export type ICreateTask = z.infer<typeof createTaskSchema>;
+
+export const updateTaskSchema = createTaskSchema.extend({
+  id: z.string().min(1, "Tarefa inválida"),
+});
+
+export type IUpdateTask = z.infer<typeof updateTaskSchema>;
