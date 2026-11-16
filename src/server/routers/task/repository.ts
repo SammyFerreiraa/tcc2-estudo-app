@@ -29,4 +29,16 @@ export const taskRepository = {
       orderBy: { createdAt: "desc" },
     });
   },
+
+  findOwnerById: async (id: string) => {
+    return await prisma.task.findUnique({ where: { id }, select: { createdById: true } });
+  },
+
+  /**
+   * Exclui a tarefa apenas se pertencer ao usuário. Retorna quantas linhas foram removidas.
+   */
+  deleteByUser: async (id: string, userId: string) => {
+    const { count } = await prisma.task.deleteMany({ where: { id, createdById: userId } });
+    return count;
+  },
 };
