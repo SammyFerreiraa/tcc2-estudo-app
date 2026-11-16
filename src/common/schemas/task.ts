@@ -23,3 +23,9 @@ export const createTaskSchema = z.object({
 });
 
 export type ICreateTask = z.infer<typeof createTaskSchema>;
+
+export const deleteTaskSchema = z.object({
+  id: z.string().min(1, "Tarefa inválida"),
+});
+
+export type IDeleteTask = z.infer<typeof deleteTaskSchema>;

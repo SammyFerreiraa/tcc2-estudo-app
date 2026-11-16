@@ -145,7 +145,25 @@ const CreateTaskForm = () => {
 };
 
 const TaskList = () => {
+  const utils = apiClient.useUtils();
   const { data: tasks, isLoading, isError, error } = apiClient.task.list.useQuery();
+
+  const deleteTask = apiClient.task.delete.useMutation({
+    onSuccess: () => {
+      toast.success("Tarefa excluída com sucesso");
+    },
+    onError: (err) => {
+      toast.error(err.message);
+    },
+    onSettled: async () => {
+      await utils.task.list.invalidate();
+    },
+  });
+
+  const handleDelete = (id: string, title: string) => {
+    if (!window.confirm(`Excluir a tarefa "${title}"?`)) return;
+    deleteTask.mutate({ id });
+  };
 
   return (
     <Card>
@@ -169,6 +187,7 @@ const TaskList = () => {
                 <TableHead>Título</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Prioridade</TableHead>
+                <TableHead className="text-right">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -180,6 +199,17 @@ const TaskList = () => {
                   </TableCell>
                   <TableCell>
                     <Badge variant={PRIORITY_VARIANT[task.priority]}>{taskPriorityLabels[task.priority]}</Badge>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Button
+                      disabled={deleteTask.isPending && deleteTask.variables?.id === task.id}
+                      onClick={() => handleDelete(task.id, task.title)}
+                      size="sm"
+                      type="button"
+                      variant="destructive"
+                    >
+                      Excluir
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
