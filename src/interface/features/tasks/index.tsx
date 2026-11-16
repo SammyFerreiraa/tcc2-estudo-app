@@ -1,11 +1,13 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import {
   createTaskSchema,
   type ICreateTask,
+  type IUpdateTask,
   TASK_PRIORITIES,
   TASK_STATUSES,
   taskPriorityLabels,
@@ -18,6 +20,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/int
 import { InputForm } from "@/interface/components/ui/input";
 import { SelectItem, SelectWithLabel } from "@/interface/components/ui/select";
 import { TableBody, TableCell, TableHead, TableHeader, TableRoot, TableRow } from "@/interface/components/ui/table";
+import { EditTaskDialog } from "./components/edit-task-dialog";
 
 type TaskStatus = (typeof TASK_STATUSES)[number];
 type TaskPriority = (typeof TASK_PRIORITIES)[number];
@@ -147,6 +150,7 @@ const CreateTaskForm = () => {
 const TaskList = () => {
   const utils = apiClient.useUtils();
   const { data: tasks, isLoading, isError, error } = apiClient.task.list.useQuery();
+  const [editingTask, setEditingTask] = useState<IUpdateTask | null>(null);
 
   const deleteTask = apiClient.task.delete.useMutation({
     onSuccess: () => {
@@ -167,6 +171,7 @@ const TaskList = () => {
 
   return (
     <Card>
+      <EditTaskDialog onClose={() => setEditingTask(null)} task={editingTask} />
       <CardHeader>
         <CardTitle>Lista de tarefas</CardTitle>
         <CardDescription>Título, status e prioridade de cada tarefa.</CardDescription>
@@ -201,15 +206,33 @@ const TaskList = () => {
                     <Badge variant={PRIORITY_VARIANT[task.priority]}>{taskPriorityLabels[task.priority]}</Badge>
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button
-                      disabled={deleteTask.isPending && deleteTask.variables?.id === task.id}
-                      onClick={() => handleDelete(task.id, task.title)}
-                      size="sm"
-                      type="button"
-                      variant="destructive"
-                    >
-                      Excluir
-                    </Button>
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        onClick={() =>
+                          setEditingTask({
+                            id: task.id,
+                            title: task.title,
+                            description: task.description ?? "",
+                            status: task.status,
+                            priority: task.priority,
+                          })
+                        }
+                        size="sm"
+                        type="button"
+                        variant="outline"
+                      >
+                        Editar
+                      </Button>
+                      <Button
+                        disabled={deleteTask.isPending && deleteTask.variables?.id === task.id}
+                        onClick={() => handleDelete(task.id, task.title)}
+                        size="sm"
+                        type="button"
+                        variant="destructive"
+                      >
+                        Excluir
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
