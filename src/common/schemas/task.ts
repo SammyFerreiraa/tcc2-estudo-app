@@ -40,6 +40,7 @@ export const listTasksSchema = z
   .object({
     status: z.enum(TASK_STATUSES, { message: "Status inválido" }).optional(),
     priority: z.enum(TASK_PRIORITIES, { message: "Prioridade inválida" }).optional(),
+    search: z.string().trim().max(150, "Termo de busca muito longo").optional(),
   })
   .optional();
 

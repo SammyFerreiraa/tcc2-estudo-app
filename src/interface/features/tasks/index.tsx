@@ -1,7 +1,8 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { keepPreviousData } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import {
@@ -17,7 +18,7 @@ import { apiClient } from "@/config/trpc/react";
 import { Badge } from "@/interface/components/ui/badge";
 import { Button } from "@/interface/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/interface/components/ui/card";
-import { InputForm } from "@/interface/components/ui/input";
+import { BaseInput, InputForm } from "@/interface/components/ui/input";
 import { SelectItem, SelectWithLabel } from "@/interface/components/ui/select";
 import { TableBody, TableCell, TableHead, TableHeader, TableRoot, TableRow } from "@/interface/components/ui/table";
 import { EditTaskDialog } from "./components/edit-task-dialog";
@@ -152,11 +153,20 @@ const CreateTaskForm = () => {
   );
 };
 
+const SEARCH_DEBOUNCE_MS = 300;
+
 const TaskList = () => {
   const utils = apiClient.useUtils();
   const [statusFilter, setStatusFilter] = useState<StatusFilter>(ALL_FILTER);
   const [priorityFilter, setPriorityFilter] = useState<PriorityFilter>(ALL_FILTER);
-  const hasFilters = statusFilter !== ALL_FILTER || priorityFilter !== ALL_FILTER;
+  const [searchInput, setSearchInput] = useState("");
+  const [search, setSearch] = useState("");
+  const [editingTask, setEditingTask] = useState<IUpdateTask | null>(null);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => setSearch(searchInput.trim()), SEARCH_DEBOUNCE_MS);
+    return () => clearTimeout(timeout);
+  }, [searchInput]);
 
   const {
     data: tasks,
@@ -167,10 +177,12 @@ const TaskList = () => {
     {
       status: statusFilter === ALL_FILTER ? undefined : statusFilter,
       priority: priorityFilter === ALL_FILTER ? undefined : priorityFilter,
+      search: search || undefined,
     },
-    { placeholderData: (previous) => previous }
+    { placeholderData: keepPreviousData }
   );
-  const [editingTask, setEditingTask] = useState<IUpdateTask | null>(null);
+
+  const hasFilters = statusFilter !== ALL_FILTER || priorityFilter !== ALL_FILTER || search.length > 0;
 
   const deleteTask = apiClient.task.delete.useMutation({
     onSuccess: () => {
@@ -192,6 +204,8 @@ const TaskList = () => {
   const clearFilters = () => {
     setStatusFilter(ALL_FILTER);
     setPriorityFilter(ALL_FILTER);
+    setSearchInput("");
+    setSearch("");
   };
 
   return (
@@ -202,6 +216,15 @@ const TaskList = () => {
         <CardDescription>Título, status e prioridade de cada tarefa.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
+        <BaseInput
+          aria-label="Buscar tarefas"
+          maxLength={150}
+          onChange={(event) => setSearchInput(event.target.value)}
+          placeholder="Buscar por título ou descrição"
+          type="search"
+          value={searchInput}
+        />
+
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
           <SelectWithLabel
             label="Filtrar por status"
@@ -244,7 +267,9 @@ const TaskList = () => {
 
         {tasks && tasks.length === 0 && (
           <p className="py-8 text-center text-muted-foreground">
-            {hasFilters ? "Nenhuma tarefa encontrada com os filtros selecionados." : "Você ainda não possui tarefas."}
+            {hasFilters
+              ? "Nenhuma tarefa encontrada com os filtros e a busca informados."
+              : "Você ainda não possui tarefas."}
           </p>
         )}
 

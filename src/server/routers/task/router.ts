@@ -31,6 +31,7 @@ export const taskRouter = createTRPCRouter({
 
   /**
    * Lista as tarefas do usuário logado (nunca de outros usuários), com filtros opcionais
+   * de status e prioridade e busca por título ou descrição (combinados com E)
    */
   list: procedures.protected.input(listTasksSchema).query(async ({ ctx, input }) => {
     if (!ctx.session) {
