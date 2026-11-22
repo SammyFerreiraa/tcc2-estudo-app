@@ -1,5 +1,6 @@
 import type { ICreateTask, IListTasks, IUpdateTask } from "@/common/schemas/task";
 import { prisma } from "@/server/config/prisma";
+import { countByWeek, getLastWeeks } from "./weekly";
 
 export const taskRepository = {
   create: async (userId: string, data: ICreateTask) => {
@@ -66,6 +67,31 @@ export const taskRepository = {
       },
       orderBy: { createdAt: "desc" },
     });
+  },
+
+  /**
+   * Conta as tarefas criadas pelo usuário em cada uma das últimas 8 semanas (segunda a domingo,
+   * a última é a semana atual). Semanas sem tarefas retornam 0.
+   */
+  countCreatedPerWeek: async (userId: string, now: Date = new Date()) => {
+    const weeks = getLastWeeks(now);
+    const rangeStart = weeks[0]?.start;
+    const rangeEnd = weeks.at(-1)?.end;
+
+    const tasks = await prisma.task.findMany({
+      where: { createdById: userId, createdAt: { gte: rangeStart, lt: rangeEnd } },
+      select: { createdAt: true },
+    });
+
+    const counts = countByWeek(
+      weeks,
+      tasks.map((task) => task.createdAt)
+    );
+
+    return weeks.map((week, index) => ({
+      weekStart: week.start.toISOString(),
+      count: counts[index] ?? 0,
+    }));
   },
 
   findOwnerById: async (id: string) => {

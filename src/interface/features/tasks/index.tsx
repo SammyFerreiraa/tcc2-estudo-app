@@ -22,6 +22,7 @@ import { BaseInput, InputForm } from "@/interface/components/ui/input";
 import { SelectItem, SelectWithLabel } from "@/interface/components/ui/select";
 import { TableBody, TableCell, TableHead, TableHeader, TableRoot, TableRow } from "@/interface/components/ui/table";
 import { EditTaskDialog } from "./components/edit-task-dialog";
+import { WeeklyCreatedChart } from "./components/weekly-created-chart";
 
 type TaskStatus = (typeof TASK_STATUSES)[number];
 type TaskPriority = (typeof TASK_PRIORITIES)[number];
@@ -69,7 +70,7 @@ const CreateTaskForm = () => {
     onSuccess: async () => {
       toast.success("Tarefa criada com sucesso");
       reset(defaultValues);
-      await utils.task.list.invalidate();
+      await Promise.all([utils.task.list.invalidate(), utils.task.weeklyCreated.invalidate()]);
     },
     onError: (error) => {
       toast.error(error.message);
@@ -192,7 +193,7 @@ const TaskList = () => {
       toast.error(err.message);
     },
     onSettled: async () => {
-      await utils.task.list.invalidate();
+      await Promise.all([utils.task.list.invalidate(), utils.task.weeklyCreated.invalidate()]);
     },
   });
 
@@ -340,6 +341,7 @@ export const TasksPage = () => {
         <p className="text-muted-foreground">Crie novas tarefas e acompanhe o que está pendente.</p>
       </div>
 
+      <WeeklyCreatedChart />
       <CreateTaskForm />
       <TaskList />
     </div>
