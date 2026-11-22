@@ -1,7 +1,8 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { keepPreviousData } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import {
@@ -17,7 +18,7 @@ import { apiClient } from "@/config/trpc/react";
 import { Badge } from "@/interface/components/ui/badge";
 import { Button } from "@/interface/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/interface/components/ui/card";
-import { InputForm } from "@/interface/components/ui/input";
+import { BaseInput, InputForm } from "@/interface/components/ui/input";
 import { SelectItem, SelectWithLabel } from "@/interface/components/ui/select";
 import { TableBody, TableCell, TableHead, TableHeader, TableRoot, TableRow } from "@/interface/components/ui/table";
 import { EditTaskDialog } from "./components/edit-task-dialog";
@@ -147,10 +148,27 @@ const CreateTaskForm = () => {
   );
 };
 
+const SEARCH_DEBOUNCE_MS = 300;
+
 const TaskList = () => {
   const utils = apiClient.useUtils();
-  const { data: tasks, isLoading, isError, error } = apiClient.task.list.useQuery();
+  const [searchInput, setSearchInput] = useState("");
+  const [search, setSearch] = useState("");
   const [editingTask, setEditingTask] = useState<IUpdateTask | null>(null);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => setSearch(searchInput.trim()), SEARCH_DEBOUNCE_MS);
+    return () => clearTimeout(timeout);
+  }, [searchInput]);
+
+  const {
+    data: tasks,
+    isLoading,
+    isError,
+    error,
+  } = apiClient.task.list.useQuery({ search: search || undefined }, { placeholderData: keepPreviousData });
+
+  const isSearching = search.length > 0;
 
   const deleteTask = apiClient.task.delete.useMutation({
     onSuccess: () => {
@@ -177,12 +195,24 @@ const TaskList = () => {
         <CardDescription>Título, status e prioridade de cada tarefa.</CardDescription>
       </CardHeader>
       <CardContent>
+        <BaseInput
+          aria-label="Buscar tarefas"
+          className="mb-4"
+          maxLength={150}
+          onChange={(event) => setSearchInput(event.target.value)}
+          placeholder="Buscar por título ou descrição"
+          type="search"
+          value={searchInput}
+        />
+
         {isLoading && <p className="text-muted-foreground text-sm">Carregando tarefas...</p>}
 
         {isError && <p className="text-destructive text-sm">{error.message}</p>}
 
         {tasks && tasks.length === 0 && (
-          <p className="py-8 text-center text-muted-foreground">Você ainda não possui tarefas.</p>
+          <p className="py-8 text-center text-muted-foreground">
+            {isSearching ? "Nenhuma tarefa encontrada" : "Você ainda não possui tarefas."}
+          </p>
         )}
 
         {tasks && tasks.length > 0 && (

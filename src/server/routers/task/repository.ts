@@ -39,11 +39,22 @@ export const taskRepository = {
   },
 
   /**
-   * Lista todas as tarefas criadas pelo usuário informado
+   * Lista as tarefas criadas pelo usuário informado.
+   * Se houver termo de busca, filtra por título ou descrição (sem diferenciar maiúsculas/minúsculas).
    */
-  findManyByUser: async (userId: string) => {
+  findManyByUser: async (userId: string, search?: string) => {
+    const term = search?.trim();
+
     return await prisma.task.findMany({
-      where: { createdById: userId },
+      where: {
+        createdById: userId,
+        ...(term && {
+          OR: [
+            { title: { contains: term, mode: "insensitive" } },
+            { description: { contains: term, mode: "insensitive" } },
+          ],
+        }),
+      },
       select: {
         id: true,
         title: true,

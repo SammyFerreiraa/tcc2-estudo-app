@@ -24,6 +24,12 @@ export const createTaskSchema = z.object({
 
 export type ICreateTask = z.infer<typeof createTaskSchema>;
 
+export const listTasksSchema = z.object({
+  search: z.string().trim().max(150, "Termo de busca muito longo").optional(),
+});
+
+export type IListTasks = z.infer<typeof listTasksSchema>;
+
 export const deleteTaskSchema = z.object({
   id: z.string().min(1, "Tarefa inválida"),
 });
