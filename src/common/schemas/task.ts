@@ -35,3 +35,12 @@ export const updateTaskSchema = createTaskSchema.extend({
 });
 
 export type IUpdateTask = z.infer<typeof updateTaskSchema>;
+
+export const listTasksSchema = z
+  .object({
+    status: z.enum(TASK_STATUSES, { message: "Status inválido" }).optional(),
+    priority: z.enum(TASK_PRIORITIES, { message: "Prioridade inválida" }).optional(),
+  })
+  .optional();
+
+export type IListTasks = z.infer<typeof listTasksSchema>;
