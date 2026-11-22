@@ -56,6 +56,18 @@ export const taskRouter = createTRPCRouter({
   }),
 
   /**
+   * Quantidade de tarefas criadas por semana nas últimas 8 semanas (segunda a domingo),
+   * considerando apenas o usuário logado
+   */
+  weeklyCreated: procedures.protected.query(async ({ ctx }) => {
+    if (!ctx.session) {
+      throw new TRPCError({ code: "UNAUTHORIZED", message: "Usuário não autenticado" });
+    }
+
+    return await taskRepository.countCreatedPerWeek(ctx.session.id);
+  }),
+
+  /**
    * Exclui uma tarefa do usuário logado
    */
   delete: procedures.protected.input(deleteTaskSchema).mutation(async ({ ctx, input }) => {
