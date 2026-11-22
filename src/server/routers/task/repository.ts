@@ -1,4 +1,4 @@
-import type { ICreateTask, IUpdateTask } from "@/common/schemas/task";
+import type { ICreateTask, IListTasks, IUpdateTask } from "@/common/schemas/task";
 import { prisma } from "@/server/config/prisma";
 
 export const taskRepository = {
@@ -39,11 +39,15 @@ export const taskRepository = {
   },
 
   /**
-   * Lista todas as tarefas criadas pelo usuário informado
+   * Lista as tarefas criadas pelo usuário informado, com filtros opcionais de status e prioridade
    */
-  findManyByUser: async (userId: string) => {
+  findManyByUser: async (userId: string, filters?: IListTasks) => {
     return await prisma.task.findMany({
-      where: { createdById: userId },
+      where: {
+        createdById: userId,
+        ...(filters?.status && { status: filters.status }),
+        ...(filters?.priority && { priority: filters.priority }),
+      },
       select: {
         id: true,
         title: true,

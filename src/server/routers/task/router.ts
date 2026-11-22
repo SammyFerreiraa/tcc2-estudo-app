@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { createTaskSchema, deleteTaskSchema, updateTaskSchema } from "@/common/schemas/task";
+import { createTaskSchema, deleteTaskSchema, listTasksSchema, updateTaskSchema } from "@/common/schemas/task";
 import { createTRPCRouter, procedures } from "@/server/config/trpc";
 import { taskRepository } from "./repository";
 
@@ -30,9 +30,9 @@ export const taskRouter = createTRPCRouter({
   }),
 
   /**
-   * Lista as tarefas do usuário logado (nunca de outros usuários)
+   * Lista as tarefas do usuário logado (nunca de outros usuários), com filtros opcionais
    */
-  list: procedures.protected.query(async ({ ctx }) => {
+  list: procedures.protected.input(listTasksSchema).query(async ({ ctx, input }) => {
     if (!ctx.session) {
       throw new TRPCError({
         code: "UNAUTHORIZED",
@@ -40,7 +40,7 @@ export const taskRouter = createTRPCRouter({
       });
     }
 
-    return await taskRepository.findManyByUser(ctx.session.id);
+    return await taskRepository.findManyByUser(ctx.session.id, input);
   }),
 
   /**

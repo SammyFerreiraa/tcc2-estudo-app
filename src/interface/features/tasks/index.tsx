@@ -25,6 +25,11 @@ import { EditTaskDialog } from "./components/edit-task-dialog";
 type TaskStatus = (typeof TASK_STATUSES)[number];
 type TaskPriority = (typeof TASK_PRIORITIES)[number];
 
+const ALL_FILTER = "ALL";
+
+type StatusFilter = TaskStatus | typeof ALL_FILTER;
+type PriorityFilter = TaskPriority | typeof ALL_FILTER;
+
 const STATUS_VARIANT: Record<TaskStatus, "default" | "secondary" | "outline"> = {
   TODO: "outline",
   IN_PROGRESS: "secondary",
@@ -149,7 +154,22 @@ const CreateTaskForm = () => {
 
 const TaskList = () => {
   const utils = apiClient.useUtils();
-  const { data: tasks, isLoading, isError, error } = apiClient.task.list.useQuery();
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>(ALL_FILTER);
+  const [priorityFilter, setPriorityFilter] = useState<PriorityFilter>(ALL_FILTER);
+  const hasFilters = statusFilter !== ALL_FILTER || priorityFilter !== ALL_FILTER;
+
+  const {
+    data: tasks,
+    isLoading,
+    isError,
+    error,
+  } = apiClient.task.list.useQuery(
+    {
+      status: statusFilter === ALL_FILTER ? undefined : statusFilter,
+      priority: priorityFilter === ALL_FILTER ? undefined : priorityFilter,
+    },
+    { placeholderData: (previous) => previous }
+  );
   const [editingTask, setEditingTask] = useState<IUpdateTask | null>(null);
 
   const deleteTask = apiClient.task.delete.useMutation({
@@ -169,6 +189,11 @@ const TaskList = () => {
     deleteTask.mutate({ id });
   };
 
+  const clearFilters = () => {
+    setStatusFilter(ALL_FILTER);
+    setPriorityFilter(ALL_FILTER);
+  };
+
   return (
     <Card>
       <EditTaskDialog onClose={() => setEditingTask(null)} task={editingTask} />
@@ -176,13 +201,51 @@ const TaskList = () => {
         <CardTitle>Lista de tarefas</CardTitle>
         <CardDescription>Título, status e prioridade de cada tarefa.</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+          <SelectWithLabel
+            label="Filtrar por status"
+            name="status-filter"
+            onValueChange={(value) => setStatusFilter(value as StatusFilter)}
+            value={statusFilter}
+            wrapperClassName="sm:w-48"
+          >
+            <SelectItem value={ALL_FILTER}>Todos</SelectItem>
+            {TASK_STATUSES.map((status) => (
+              <SelectItem key={status} value={status}>
+                {taskStatusLabels[status]}
+              </SelectItem>
+            ))}
+          </SelectWithLabel>
+
+          <SelectWithLabel
+            label="Filtrar por prioridade"
+            name="priority-filter"
+            onValueChange={(value) => setPriorityFilter(value as PriorityFilter)}
+            value={priorityFilter}
+            wrapperClassName="sm:w-48"
+          >
+            <SelectItem value={ALL_FILTER}>Todas</SelectItem>
+            {TASK_PRIORITIES.map((priority) => (
+              <SelectItem key={priority} value={priority}>
+                {taskPriorityLabels[priority]}
+              </SelectItem>
+            ))}
+          </SelectWithLabel>
+
+          <Button disabled={!hasFilters} onClick={clearFilters} type="button" variant="outline">
+            Limpar filtros
+          </Button>
+        </div>
+
         {isLoading && <p className="text-muted-foreground text-sm">Carregando tarefas...</p>}
 
         {isError && <p className="text-destructive text-sm">{error.message}</p>}
 
         {tasks && tasks.length === 0 && (
-          <p className="py-8 text-center text-muted-foreground">Você ainda não possui tarefas.</p>
+          <p className="py-8 text-center text-muted-foreground">
+            {hasFilters ? "Nenhuma tarefa encontrada com os filtros selecionados." : "Você ainda não possui tarefas."}
+          </p>
         )}
 
         {tasks && tasks.length > 0 && (
