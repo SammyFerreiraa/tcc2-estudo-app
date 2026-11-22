@@ -45,6 +45,17 @@ export const taskRouter = createTRPCRouter({
   }),
 
   /**
+   * Totais de tarefas do usuário logado: geral, por status e por prioridade
+   */
+  stats: procedures.protected.query(async ({ ctx }) => {
+    if (!ctx.session) {
+      throw new TRPCError({ code: "UNAUTHORIZED", message: "Usuário não autenticado" });
+    }
+
+    return await taskRepository.countStatsByUser(ctx.session.id);
+  }),
+
+  /**
    * Exclui uma tarefa do usuário logado
    */
   delete: procedures.protected.input(deleteTaskSchema).mutation(async ({ ctx, input }) => {
